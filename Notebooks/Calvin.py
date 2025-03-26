@@ -14,7 +14,7 @@
 # 
 # By understanding these relationships, we can inform policy decisions, advocate for emission reduction strategies, and explore mitigation efforts such as carbon capture technologies and sustainable urban planning to minimize future risks.
 
-# In[45]:
+# In[68]:
 
 
 # Required Libraries
@@ -41,66 +41,72 @@ from sklearn.metrics import mean_squared_error
 
 
 
-# In[46]:
+# In[83]:
 
 
 #Load Datasets
 
 # Define file paths
-file3 = r"C:\Users\hp\Desktop\Calvin Desktop\Capstone Project  -  Group 8\Data\Climate Change - datasets\Global_sea_level_rise.csv"
+file3 = r"C:\Users\hp\Desktop\Calvin Desktop\Capstone Project  -  Group 8\Data\Climate Change - datasets\climate_data_final_df.csv"
 
 # Load CSV files
-Global_sea_level = pd.read_csv(file3)
+Climate_Change_data = pd.read_csv(file3)
 
 
 
-# In[47]:
+# In[84]:
 
 
-Global_sea_level_1 = Global_sea_level.copy()
+Climate_Change_data_1 = Climate_Change_data.copy()
 
 
-# In[48]:
+# In[85]:
 
 
-Global_sea_level.head()
+Climate_Change_data.head()
 
 
-# In[49]:
+# In[86]:
+
+
+Climate_Change_data.columns
+
+
+# In[72]:
 
 
 # Check the structure of the datasets
-print(Global_sea_level.info(), "\n")
+print(Climate_Change_data.info(), "\n")
 
 
-# In[50]:
+# In[73]:
 
 
 print("Missing values in Global Sea Level Dataset:")
-print(Global_sea_level.isnull().sum(), "\n")
+print(Climate_Change_data.isnull().sum(), "\n")
 
 
-# In[51]:
+# In[74]:
 
 
-print(Global_sea_level.describe(), "\n")
+print(Climate_Change_data.describe(), "\n")
 
 
-# In[52]:
+# In[75]:
 
 
-print("Duplicates in Global Sea Level Dataset:", Global_sea_level.duplicated().sum())
+print("Duplicates in Global Sea Level Dataset:", Climate_Change_data.duplicated().sum())
 
 
 # 2. Global Sea Level Rise Over Time
 # 
 # This will visualize how sea levels have changed over time.
 
-# In[53]:
+# In[76]:
 
 
 plt.figure(figsize=(12, 6))
-sns.lineplot(x=Global_sea_level["year"], y=Global_sea_level["mmfrom1993-2008average"], marker="o", linestyle="-")
+sns.lineplot(x=Climate_Change_data["Year"], y=Climate_Change_data["mmfrom1993-2008average"], marker="o", linestyle="-")
 plt.axhline(0, color="gray", linestyle="--", alpha=0.7)  # Reference line for 1993-2008 average
 plt.xlabel("Year")
 plt.ylabel("Sea Level Change (mm)")
@@ -113,20 +119,20 @@ plt.show()
 # 
 # **Sea Level Rise Overtime: Linear Regression**
 
-# In[54]:
+# In[77]:
 
 
-X = Global_sea_level[["year"]]
-y = Global_sea_level["mmfrom1993-2008average"]
+X = Climate_Change_data[["Year"]]
+y = Climate_Change_data["mmfrom1993-2008average"]
 
 model = LinearRegression()
 model.fit(X, y)
 
-Global_sea_level["predicted"] = model.predict(X)
+Climate_Change_data["predicted"] = model.predict(X)
 
 plt.figure(figsize=(12, 6))
-sns.scatterplot(x=Global_sea_level["year"], y=Global_sea_level["mmfrom1993-2008average"], label="Actual Data")
-sns.lineplot(x=Global_sea_level["year"], y=Global_sea_level["predicted"], color="red", label="Linear Trend")
+sns.scatterplot(x=Climate_Change_data["Year"], y=Climate_Change_data["mmfrom1993-2008average"], label="Actual Data")
+sns.lineplot(x=Climate_Change_data["Year"], y=Climate_Change_data["predicted"], color="red", label="Linear Trend")
 plt.xlabel("Year")
 plt.ylabel("Sea Level Change (mm)")
 plt.title("Sea Level Rise Trend with Linear Regression")
@@ -139,14 +145,14 @@ plt.show()
 # 
 # **Identify Patterns in sea level rise across different periods**
 
-# In[55]:
+# In[78]:
 
 
 kmeans = KMeans(n_clusters=3, random_state=42)
-Global_sea_level["cluster"] = kmeans.fit_predict(Global_sea_level[["mmfrom1993-2008average"]])
+Climate_Change_data["cluster"] = kmeans.fit_predict(Climate_Change_data[["mmfrom1993-2008average"]])
 
 plt.figure(figsize=(12, 6))
-sns.scatterplot(x=Global_sea_level["year"], y=Global_sea_level["mmfrom1993-2008average"], hue=Global_sea_level["cluster"], palette="viridis")
+sns.scatterplot(x=Climate_Change_data["Year"], y=Climate_Change_data["mmfrom1993-2008average"], hue=Climate_Change_data["cluster"], palette="viridis")
 plt.xlabel("Year")
 plt.ylabel("Sea Level Change (mm)")
 plt.title("Clustering of Sea Level Rise Data")
@@ -186,22 +192,22 @@ plt.show()
 # 
 # **Check for unusual changes in sea levels**
 
-# In[56]:
+# In[79]:
 
 
 # Calculate Z-score for anomaly detection
-Global_sea_level["z_score"] = (Global_sea_level["mmfrom1993-2008average"] - 
-                               Global_sea_level["mmfrom1993-2008average"].mean()) / \
-                               Global_sea_level["mmfrom1993-2008average"].std()
+Climate_Change_data["z_score"] = (Climate_Change_data["mmfrom1993-2008average"] - 
+                               Climate_Change_data["mmfrom1993-2008average"].mean()) / \
+                               Climate_Change_data["mmfrom1993-2008average"].std()
 
 # Mark anomalies where the absolute Z-score is greater than 2
-Global_sea_level["anomaly"] = Global_sea_level["z_score"].abs() > 2  
+Climate_Change_data["anomaly"] = Climate_Change_data["z_score"].abs() > 2  
 
 # Plot anomalies in sea level rise
 plt.figure(figsize=(12, 6))
-sns.scatterplot(x=Global_sea_level["year"], 
-                y=Global_sea_level["mmfrom1993-2008average"], 
-                hue=Global_sea_level["anomaly"], 
+sns.scatterplot(x=Climate_Change_data["Year"], 
+                y=Climate_Change_data["mmfrom1993-2008average"], 
+                hue=Climate_Change_data["anomaly"], 
                 palette={False: "blue", True: "red"})
 
 # Labels and title
@@ -240,46 +246,13 @@ plt.show()
 # - Data anomalies might also reflect improved precision rather than sudden shifts.
 # 
 # ### **Summary**  
-# The anomalies between 1980 and the present likely reflect a **combination of human-induced climate change, ice melt acceleration, extreme weather, and improved measurement techniques**. The last few decades have seen a **dramatic increase in sea level rise rates**, and these anomalies may indicate an even steeper upward trend in the coming years.
+# The anomalies between 1980 and the present likely reflect a **combination of human-induced climate change, ice melt acceleration, extreme weather, and improved measurement techniques**. The last few decades have seen a **dramatic increase in sea level rise rates**, and these anomalies may indicate an even steeper upward trend in the coming Years.
 # 
 # 
 
 # ## **The ARIMA-based Forecast of Global Sea Level**
 
-# In[57]:
-
-
-# Ensure year is the index and convert to datetime format
-Global_sea_level_1["year"] = pd.to_datetime(Global_sea_level_1["year"], format="%Y")
-Global_sea_level_1.set_index("year", inplace=True)
-
-# Fit an ARIMA model (tune order=(p, d, q) for better accuracy)
-model = ARIMA(Global_sea_level_1["mmfrom1993-2008average"], order=(2, 1, 2))  
-model_fit = model.fit()
-
-# Forecast the next 30 years
-future_steps = 30
-future_years = [Global_sea_level_1.index[-1] + pd.DateOffset(years=i) for i in range(1, future_steps + 1)]
-forecast = model_fit.forecast(steps=future_steps)
-
-# Convert forecast to a Pandas Series with correct index
-forecast_series = pd.Series(forecast, index=pd.to_datetime(future_years))
-
-# Plot historical and predicted values
-plt.figure(figsize=(12, 6))
-plt.plot(Global_sea_level_1.index, Global_sea_level_1["mmfrom1993-2008average"], label="Actual Sea Level Rise", color="blue")
-plt.plot(forecast_series.index, forecast_series, label="Predicted Sea Level Rise", color="red", linestyle="dashed")
-
-# Labels and title
-plt.xlabel("Year")
-plt.ylabel("Sea Level Change (mm)")
-plt.title("Global Sea Level Rise Prediction (ARIMA)")
-plt.legend()
-plt.grid(True)
-plt.show()
-
-
-# In[67]:
+# In[ ]:
 
 
 import itertools
@@ -290,7 +263,7 @@ import statsmodels.api as sm
 p = range(0, 4)
 d = range(0, 3)
 q = range(0, 4)
-data = Global_sea_level_1["mmfrom1993-2008average"]
+data = Climate_Change_data_1["mmfrom1993-2008average"]
 
 # Generate all possible combinations of p, d, q
 pdq_combinations = list(itertools.product(p, d, q))
@@ -316,7 +289,7 @@ print(f"Best ARIMA Order: {best_order}")
 
 # Test CODE for tuning
 
-# In[58]:
+# In[ ]:
 
 
 import itertools
@@ -332,8 +305,8 @@ q = range(0, 4)  # Typically, 0 to 3
 # Generate all possible combinations
 pdq_combinations = list(itertools.product(p, d, q))
 
-# Load your dataset (assuming 'year' is the index and data column is 'mmfrom1993-2008average')
-data = Global_sea_level_1["mmfrom1993-2008average"]
+# Load your dataset (assuming 'Year' is the index and data column is 'mmfrom1993-2008average')
+data = Climate_Change_data_1["mmfrom1993-2008average"]
 
 # Grid search to find the best ARIMA order
 best_aic = np.inf  # Set initial AIC to infinity
@@ -379,7 +352,7 @@ for order, aic in results[:5]:
 # 
 # The best forecast strategy in this case is to look at the trend and use past forecast errors to adjust future predictions.
 
-# In[59]:
+# In[ ]:
 
 
 import pandas as pd
@@ -387,7 +360,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from statsmodels.tsa.arima.model import ARIMA
 
-def forecast_sea_level(data, date_col, value_col, order=(0, 2, 2), future_years=30):
+def forecast_sea_level(data, date_col, value_col, order=(0, 2, 2), future_Years=30):
     """
     Fits an ARIMA model to forecast future sea level changes.
 
@@ -396,7 +369,7 @@ def forecast_sea_level(data, date_col, value_col, order=(0, 2, 2), future_years=
     - date_col (str): Column name for the date (must be convertible to datetime).
     - value_col (str): Column name for the sea level measurement.
     - order (tuple): ARIMA (p, d, q) parameters. The model with the lowest AIC is (0,2,2).
-    - future_years (int): Number of future years to forecast. Default is 30.
+    - future_Years (int): Number of future Years to forecast. Default is 30.
 
     Returns:
     - forecast_df (DataFrame): DataFrame with future dates and predicted values.
@@ -416,8 +389,8 @@ def forecast_sea_level(data, date_col, value_col, order=(0, 2, 2), future_years=
 
         # Generate future dates
         last_date = data.index[-1]
-        future_dates = [last_date + pd.DateOffset(years=i) for i in range(1, future_years + 1)]
-        forecast = model_fit.forecast(steps=future_years)
+        future_dates = [last_date + pd.DateOffset(Years=i) for i in range(1, future_Years + 1)]
+        forecast = model_fit.forecast(steps=future_Years)
 
         # Convert forecast into DataFrame
         forecast_df = pd.DataFrame({date_col: future_dates, value_col: forecast.values})
@@ -441,13 +414,13 @@ def forecast_sea_level(data, date_col, value_col, order=(0, 2, 2), future_years=
         return None
 
 # Example usage
-forecast_results = forecast_sea_level(Global_sea_level, "date", "mmfrom1993-2008average")
+forecast_results = forecast_sea_level(Climate_Change_data, "date", "mmfrom1993-2008average")
 
 
 
 # ## **Model Validation**
 
-# In[60]:
+# In[ ]:
 
 
 #Residuals (Errors) Should Look Like White Noise
@@ -467,7 +440,7 @@ plt.show()
 # 
 # The above plot shows that residuals are randomly scattered around zero, indicating that the model has captured the data trend well.
 
-# In[62]:
+# In[ ]:
 
 
 import pandas as pd
@@ -478,15 +451,15 @@ from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.arima.model import ARIMA
 
 # Load and preprocess the data
-data = Global_sea_level_1.copy()
+data = Climate_Change_data_1.copy()
 
 # Ensure the 'date' column is in datetime format
 data["date"] = pd.to_datetime(data["date"])
 
-# Extract the year from the 'date' column
-data["year"] = data["date"].dt.year
+# Extract the Year from the 'date' column
+data["Year"] = data["date"].dt.Year
 
-# Set the year as the index (keeping it as a time-based index)
+# Set the Year as the index (keeping it as a time-based index)
 data.set_index("date", inplace=True)
 
 # Fit ARIMA(0,2,2) model
@@ -515,9 +488,15 @@ ax[1].set_title("QQ Plot of Residuals")
 plt.show()
 
 
+# In[81]:
+
+
+Climate_Change_data.columns
+
+
 # **Interpretation**
 # 
-# ✅ The model predicts a significant rise in sea levels over the next 30 years.
+# ✅ The model predicts a significant rise in sea levels over the next 30 Years.
 # 
 # ✅ The rate of increase is consistent with past observations, meaning sea levels are expected to continue rising at a similar pace.
 # 
@@ -616,3 +595,698 @@ plt.show()
 # Sea level rise is not a distant threat—it is happening **now**. Governments, businesses, and individuals must **invest in climate resilience**, reduce carbon emissions, and prepare for an era of change. 
 # 
 # 
+
+# ### **NEW CODE**
+
+# In[ ]:
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+import streamlit as st
+
+# Load dataset
+df = pd.read_csv(r"C:\Users\hp\Desktop\Calvin Desktop\Capstone Project  -  Group 8\Data\Climate Change - datasets\climate_data_final_df.csv")
+
+# Drop irrelevant columns
+df.drop(columns=['Unnamed: 0', 'Entity', 'Year'], inplace=True)
+
+# Define feature-target relationships
+climate_factors = ['Annual CO₂ emissions (per capita)',
+                   'Carbon dioxide emissions from industry',
+                   'Carbon dioxide emissions from transport',
+                   'Carbon dioxide emissions from electricity and heat']
+
+climate_indicators = ['Average Temperature', 'mmfrom1993-2008average']
+energy_impact = ['Renewable energy consumption (% of total final energy consumption)']
+
+# Step 1: Predict Climate Indicators from Emissions
+X_climate = df[climate_factors]
+y_climate = df[climate_indicators]
+X_train, X_test, y_train, y_test = train_test_split(X_climate, y_climate, test_size=0.2, random_state=42)
+
+# Train Model
+rf_climate = RandomForestRegressor(n_estimators=100, random_state=42)
+rf_climate.fit(X_train, y_train)
+y_pred_climate = rf_climate.predict(X_test)
+
+# Step 2: Predict Energy Consumption from Climate Indicators
+X_energy = df[climate_indicators]
+y_energy = df[energy_impact]
+X_train, X_test, y_train, y_test = train_test_split(X_energy, y_energy, test_size=0.2, random_state=42)
+
+# Train Model
+rf_energy = RandomForestRegressor(n_estimators=100, random_state=42)
+rf_energy.fit(X_train, y_train)
+y_pred_energy = rf_energy.predict(X_test)
+
+# Streamlit App
+st.title("Climate Change Impact Analysis")
+st.subheader("Feature Importance")
+st.bar_chart(pd.Series(rf_climate.feature_importances_, index=climate_factors))
+
+st.subheader("Actual vs Predicted Climate Indicators")
+fig, ax = plt.subplots()
+ax.scatter(y_test.iloc[:, 0], y_pred_climate[:, 0], alpha=0.5, label='Temperature')
+ax.scatter(y_test.iloc[:, 1], y_pred_climate[:, 1], alpha=0.5, label='Sea Level Rise')
+ax.legend()
+st.pyplot(fig)
+
+st.subheader("Actual vs Predicted Energy Consumption")
+fig, ax = plt.subplots()
+ax.scatter(y_test, y_pred_energy, alpha=0.5, label='Energy Consumption')
+ax.legend()
+st.pyplot(fig)
+
+
+# ## **master code 2**
+
+# In[ ]:
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import streamlit as st
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+import scipy.stats as stats
+
+# Load Data
+file_path = r"C:\Users\hp\Desktop\Calvin Desktop\Capstone Project  -  Group 8\Data\Climate Change - datasets\climate_data_final_df.csv"
+df = pd.read_csv(file_path)
+
+# Drop Unnecessary Column
+df.drop(columns=['Unnamed: 0'], inplace=True)
+
+# Feature Selection
+features = [
+    'Carbon dioxide emissions from buildings',
+    'Carbon dioxide emissions from industry',
+    'Carbon dioxide emissions from land use change and forestry',
+    'Carbon dioxide emissions from other fuel combustion',
+    'Carbon dioxide emissions from transport',
+    'Carbon dioxide emissions from manufacturing and construction',
+    'Fugitive emissions of carbon dioxide from energy production',
+    'Carbon dioxide emissions from electricity and heat',
+    'Carbon dioxide emissions from bunker fuels',
+    'Greenhouse gas emissions from agriculture',
+    'Greenhouse gas emissions from land use change and forestry',
+    'Greenhouse gas emissions from waste',
+    'Greenhouse gas emissions from buildings',
+    'Greenhouse gas emissions from industry',
+    'Greenhouse gas emissions from manufacturing and construction',
+    'Greenhouse gas emissions from transport',
+    'Greenhouse gas emissions from electricity and heat',
+    'Fugitive emissions of greenhouse gases from energy production',
+    'Greenhouse gas emissions from other fuel combustion',
+    'Greenhouse gas emissions from bunker fuels',
+    'Annual CO₂ emissions (per capita)'
+]
+
+# Target Variables
+climate_targets = ['Average Temperature', 'mmfrom1993-2008average']
+energy_targets = ['Renewable energy consumption (% of total final energy consumption)']
+
+# Train Model Function
+def train_model(X, y):
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    model = RandomForestRegressor(n_estimators=100, random_state=42)
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    
+    # Model Performance
+    mae = mean_absolute_error(y_test, y_pred)
+    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+    r2 = r2_score(y_test, y_pred)
+    
+    return model, y_test, y_pred, mae, rmse, r2
+
+# Train Climate Model
+X_climate = df[features]
+y_climate = df[climate_targets]
+climate_model, y_climate_test, y_climate_pred, climate_mae, climate_rmse, climate_r2 = train_model(X_climate, y_climate)
+
+# Train Energy Model
+X_energy = df[features]
+y_energy = df[energy_targets]
+energy_model, y_energy_test, y_energy_pred, energy_mae, energy_rmse, energy_r2 = train_model(X_energy, y_energy)
+
+# Residual Analysis
+def plot_residuals(y_test, y_pred):
+    residuals = y_test - y_pred
+    fig, axes = plt.subplots(1, 2, figsize=(10, 5))
+    
+    # Histogram
+    axes[0].hist(residuals, bins=20, edgecolor='black')
+    axes[0].set_title("Histogram of Residuals")
+    
+    # Q-Q Plot
+    stats.probplot(residuals, dist="norm", plot=axes[1])
+    axes[1].set_title("QQ Plot of Residuals")
+    
+    plt.tight_layout()
+    plt.show()
+
+# Plot Residuals for Climate and Energy Models
+plot_residuals(y_climate_test.values.flatten(), y_climate_pred.flatten())
+plot_residuals(y_energy_test.values.flatten(), y_energy_pred.flatten())
+
+# Feature Importance
+def plot_feature_importance(model, X):
+    importances = model.feature_importances_
+    indices = np.argsort(importances)[::-1]
+    
+    plt.figure(figsize=(10, 5))
+    plt.title("Feature Importance")
+    plt.bar(range(X.shape[1]), importances[indices], align="center")
+    plt.xticks(range(X.shape[1]), [X.columns[i] for i in indices], rotation=90)
+    plt.show()
+
+plot_feature_importance(climate_model, X_climate)
+plot_feature_importance(energy_model, X_energy)
+
+# Streamlit Deployment
+st.title("Climate Change & Energy Impact Analysis")
+st.subheader("Emissions Impact on Climate & Energy")
+
+# Display Metrics
+st.write("### Climate Model Performance")
+st.write(f"MAE: {climate_mae:.2f}, RMSE: {climate_rmse:.2f}, R2: {climate_r2:.2f}")
+st.write("### Energy Model Performance")
+st.write(f"MAE: {energy_mae:.2f}, RMSE: {energy_rmse:.2f}, R2: {energy_r2:.2f}")
+
+
+# In[ ]:
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import streamlit as st
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense, Dropout
+import scipy.stats as stats
+
+# Load Data
+file_path = r"C:\Users\hp\Desktop\Calvin Desktop\Capstone Project  -  Group 8\Data\Climate Change - datasets\climate_data_final_df.csv"
+df = pd.read_csv(file_path)
+
+# Drop Unnecessary Column
+df.drop(columns=['Unnamed: 0'], inplace=True)
+
+# Exploratory Data Analysis (EDA)
+st.title("Climate Change & Energy Impact Analysis")
+st.subheader("Exploratory Data Analysis")
+
+st.write("### Dataset Overview")
+st.write(df.head())
+
+st.write("### Summary Statistics")
+st.write(df.describe())
+
+st.write("### Missing Values")
+st.write(df.isnull().sum())
+
+# Feature Selection
+features = [
+    'Carbon dioxide emissions from buildings',
+    'Carbon dioxide emissions from industry',
+    'Carbon dioxide emissions from land use change and forestry',
+    'Carbon dioxide emissions from other fuel combustion',
+    'Carbon dioxide emissions from transport',
+    'Carbon dioxide emissions from manufacturing and construction',
+    'Fugitive emissions of carbon dioxide from energy production',
+    'Carbon dioxide emissions from electricity and heat',
+    'Carbon dioxide emissions from bunker fuels',
+    'Greenhouse gas emissions from agriculture',
+    'Greenhouse gas emissions from land use change and forestry',
+    'Greenhouse gas emissions from waste',
+    'Greenhouse gas emissions from buildings',
+    'Greenhouse gas emissions from industry',
+    'Greenhouse gas emissions from manufacturing and construction',
+    'Greenhouse gas emissions from transport',
+    'Greenhouse gas emissions from electricity and heat',
+    'Fugitive emissions of greenhouse gases from energy production',
+    'Greenhouse gas emissions from other fuel combustion',
+    'Greenhouse gas emissions from bunker fuels',
+    'Annual CO₂ emissions (per capita)'
+]
+
+# Target Variables
+climate_targets = ['Average Temperature', 'mmfrom1993-2008average']
+energy_targets = ['Renewable energy consumption (% of total final energy consumption)']
+
+# Train Model Function
+def train_model(X, y, model_type='random_forest'):
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    
+    if model_type == 'random_forest':
+        model = RandomForestRegressor(n_estimators=100, random_state=42)
+    elif model_type == 'lstm':
+        model = Sequential([
+            LSTM(50, return_sequences=True, input_shape=(X_train.shape[1], 1)),
+            Dropout(0.2),
+            LSTM(50, return_sequences=False),
+            Dropout(0.2),
+            Dense(y_train.shape[1])
+        ])
+        model.compile(optimizer='adam', loss='mse')
+        X_train = np.expand_dims(X_train, axis=-1)
+        X_test = np.expand_dims(X_test, axis=-1)
+        model.fit(X_train, y_train, epochs=50, batch_size=16, verbose=0)
+    
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    
+    # Model Performance
+    mae = mean_absolute_error(y_test, y_pred)
+    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+    r2 = r2_score(y_test, y_pred)
+    
+    return model, y_test, y_pred, mae, rmse, r2
+
+# Train Climate Model
+X_climate = df[features]
+y_climate = df[climate_targets]
+climate_model, y_climate_test, y_climate_pred, climate_mae, climate_rmse, climate_r2 = train_model(X_climate, y_climate)
+
+# Train Energy Model
+X_energy = df[features]
+y_energy = df[energy_targets]
+energy_model, y_energy_test, y_energy_pred, energy_mae, energy_rmse, energy_r2 = train_model(X_energy, y_energy)
+
+# Residual Analysis
+def plot_residuals(y_test, y_pred):
+    residuals = y_test - y_pred
+    fig, axes = plt.subplots(1, 2, figsize=(10, 5))
+    
+    # Histogram
+    axes[0].hist(residuals, bins=20, edgecolor='black')
+    axes[0].set_title("Histogram of Residuals")
+    
+    # Q-Q Plot
+    stats.probplot(residuals, dist="norm", plot=axes[1])
+    axes[1].set_title("QQ Plot of Residuals")
+    
+    plt.tight_layout()
+    plt.show()
+
+# Plot Residuals for Climate and Energy Models
+plot_residuals(y_climate_test.values.flatten(), y_climate_pred.flatten())
+plot_residuals(y_energy_test.values.flatten(), y_energy_pred.flatten())
+
+# Feature Importance
+def plot_feature_importance(model, X):
+    if hasattr(model, 'feature_importances_'):
+        importances = model.feature_importances_
+        indices = np.argsort(importances)[::-1]
+        
+        plt.figure(figsize=(10, 5))
+        plt.title("Feature Importance")
+        plt.bar(range(X.shape[1]), importances[indices], align="center")
+        plt.xticks(range(X.shape[1]), [X.columns[i] for i in indices], rotation=90)
+        plt.show()
+
+plot_feature_importance(climate_model, X_climate)
+plot_feature_importance(energy_model, X_energy)
+
+# Streamlit Deployment
+st.subheader("Emissions Impact on Climate & Energy")
+
+# Model Selection
+model_choice = st.selectbox("Select Model", ["Random Forest", "LSTM"])
+if model_choice == "Random Forest":
+    selected_model, y_test, y_pred, mae, rmse, r2 = train_model(X_climate, y_climate, model_type='random_forest')
+elif model_choice == "LSTM":
+    selected_model, y_test, y_pred, mae, rmse, r2 = train_model(X_climate, y_climate, model_type='lstm')
+
+# Display Metrics
+st.write("### Model Performance")
+st.write(f"MAE: {mae:.2f}, RMSE: {rmse:.2f}, R2: {r2:.2f}")
+
+
+# #### **Master 1**
+
+# In[87]:
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import streamlit as st
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense, Dropout
+import scipy.stats as stats
+
+# Load Data
+file_path = r"C:\Users\hp\Desktop\Calvin Desktop\Capstone Project  -  Group 8\Data\Climate Change - datasets\climate_data_final_df.csv"
+df = pd.read_csv(file_path)
+
+# Drop Unnecessary Column
+df.drop(columns=['Unnamed: 0'], inplace=True)
+
+# Streamlit UI
+st.title("Climate Change & Energy Impact Analysis")
+st.subheader("Exploratory Data Analysis")
+
+# Country and Feature Selection
+selected_countries = st.multiselect("Select Countries", df['Entity'].unique(), default=df['Entity'].unique())
+selected_features = st.multiselect("Select Features", df.columns[2:-1], default=df.columns[2:-1])
+
+df = df[df['Entity'].isin(selected_countries)]
+
+st.write("### Dataset Overview")
+st.write(df[selected_features].head())
+
+st.write("### Summary Statistics")
+st.write(df[selected_features].describe())
+
+st.write("### Missing Values")
+st.write(df[selected_features].isnull().sum())
+
+# Feature and Target Selection
+features = selected_features
+targets = ['Average Temperature', 'mmfrom1993-2008average', 'Renewable energy consumption (% of total final energy consumption)']
+
+# Train Model Function
+def train_model(X, y, model_type='random_forest'):
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    
+    if model_type == 'random_forest':
+        model = RandomForestRegressor(n_estimators=100, random_state=42)
+    elif model_type == 'lstm':
+        model = Sequential([
+            LSTM(50, return_sequences=True, input_shape=(X_train.shape[1], 1)),
+            Dropout(0.2),
+            LSTM(50, return_sequences=False),
+            Dropout(0.2),
+            Dense(y_train.shape[1])
+        ])
+        model.compile(optimizer='adam', loss='mse')
+        X_train = np.expand_dims(X_train, axis=-1)
+        X_test = np.expand_dims(X_test, axis=-1)
+        model.fit(X_train, y_train, epochs=50, batch_size=16, verbose=0)
+    
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    
+    # Model Performance
+    mae = mean_absolute_error(y_test, y_pred)
+    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+    r2 = r2_score(y_test, y_pred)
+    
+    return model, X_train, X_test, y_test, y_pred, mae, rmse, r2
+
+# Model Selection
+model_choice = st.selectbox("Select Model", ["Random Forest", "LSTM"])
+X = df[features]
+y = df[targets]
+
+if model_choice == "Random Forest":
+    selected_model, X_train, X_test, y_test, y_pred, mae, rmse, r2 = train_model(X, y, model_type='random_forest')
+elif model_choice == "LSTM":
+    selected_model, X_train, X_test, y_test, y_pred, mae, rmse, r2 = train_model(X, y, model_type='lstm')
+
+# Display Metrics
+st.write("### Model Performance")
+st.write(f"MAE: {mae:.2f}, RMSE: {rmse:.2f}, R2: {r2:.2f}")
+
+# Feature Importance (for Random Forest)
+if model_choice == "Random Forest":
+    st.write("### Feature Importance")
+    feature_importance = selected_model.feature_importances_
+    importance_df = pd.DataFrame({'Feature': features, 'Importance': feature_importance}).sort_values(by='Importance', ascending=False)
+    fig, ax = plt.subplots()
+    sns.barplot(x='Importance', y='Feature', data=importance_df, ax=ax)
+    st.pyplot(fig)
+
+# Residual Plot
+st.write("### Residual Analysis")
+fig, ax = plt.subplots()
+sns.scatterplot(x=y_test.values.flatten(), y=(y_test.values.flatten() - y_pred.flatten()), ax=ax)
+ax.axhline(y=0, color='r', linestyle='--')
+ax.set_xlabel("Actual Values")
+ax.set_ylabel("Residuals")
+st.pyplot(fig)
+
+
+# 2.0
+
+# In[88]:
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import streamlit as st
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense, Dropout
+
+# Load Data
+file_path = r"C:\Users\hp\Desktop\Calvin Desktop\Capstone Project  -  Group 8\Data\Climate Change - datasets\climate_data_final_df.csv"
+df = pd.read_csv(file_path)
+
+# Drop Unnecessary Column
+df.drop(columns=['Unnamed: 0'], inplace=True, errors='ignore')
+
+# Streamlit UI
+st.title("Climate Change & Energy Impact Analysis")
+st.subheader("Exploratory Data Analysis")
+
+# Country and Feature Selection
+selected_countries = st.multiselect("Select Countries", df['Entity'].unique(), default=df['Entity'].unique())
+selected_features = st.multiselect("Select Features", df.columns[2:-1], default=df.columns[2:-1])
+
+df = df[df['Entity'].isin(selected_countries)]
+
+st.write("### Dataset Overview")
+st.write(df[selected_features].head())
+
+st.write("### Summary Statistics")
+st.write(df[selected_features].describe())
+
+st.write("### Missing Values")
+st.write(df[selected_features].isnull().sum())
+
+# Handle Missing Values (Imputation or Dropping as needed)
+df.dropna(inplace=True)  # Can be replaced with df.fillna(df.mean()) if needed
+
+# Feature and Target Selection
+features = selected_features
+targets = ['Average Temperature', 'mmfrom1993-2008average', 'Renewable energy consumption (% of total final energy consumption)']
+
+# Train Model Function
+def train_model(X, y, model_type='random_forest'):
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
+    
+    if model_type == 'random_forest':
+        model = RandomForestRegressor(n_estimators=100, random_state=42)
+        model.fit(X_train, y_train)
+    elif model_type == 'lstm':
+        X_train = np.expand_dims(X_train, axis=-1)
+        X_test = np.expand_dims(X_test, axis=-1)
+        
+        model = Sequential([
+            LSTM(50, return_sequences=True, input_shape=(X_train.shape[1], 1)),
+            Dropout(0.2),
+            LSTM(50, return_sequences=False),
+            Dropout(0.2),
+            Dense(1)  # Ensure single output
+        ])
+        
+        model.compile(optimizer='adam', loss='mse')
+        model.fit(X_train, y_train, epochs=50, batch_size=16, verbose=0)
+    
+    y_pred = model.predict(X_test)
+    
+    # Model Performance
+    mae = mean_absolute_error(y_test, y_pred)
+    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+    r2 = r2_score(y_test, y_pred)
+    
+    return model, scaler, X_train, X_test, y_test, y_pred, mae, rmse, r2
+
+# Model Selection
+model_choice = st.selectbox("Select Model", ["Random Forest", "LSTM"])
+X = df[features]
+y = df[targets]
+
+if model_choice == "Random Forest":
+    selected_model, scaler, X_train, X_test, y_test, y_pred, mae, rmse, r2 = train_model(X, y, model_type='random_forest')
+elif model_choice == "LSTM":
+    selected_model, scaler, X_train, X_test, y_test, y_pred, mae, rmse, r2 = train_model(X, y, model_type='lstm')
+
+# Display Metrics
+st.write("### Model Performance")
+st.write(f"MAE: {mae:.2f}, RMSE: {rmse:.2f}, R2: {r2:.2f}")
+
+# Feature Importance (for Random Forest)
+if model_choice == "Random Forest":
+    st.write("### Feature Importance")
+    feature_importance = selected_model.feature_importances_
+    importance_df = pd.DataFrame({'Feature': features, 'Importance': feature_importance}).sort_values(by='Importance', ascending=False)
+    fig, ax = plt.subplots()
+    sns.barplot(x='Importance', y='Feature', data=importance_df, ax=ax)
+    st.pyplot(fig)
+
+# Residual Plot
+st.write("### Residual Analysis")
+fig, ax = plt.subplots()
+sns.scatterplot(x=y_test.values.flatten(), y=(y_test.values.flatten() - y_pred.flatten()), ax=ax)
+ax.axhline(y=0, color='r', linestyle='--')
+ax.set_xlabel("Actual Values")
+ax.set_ylabel("Residuals")
+st.pyplot(fig)
+
+
+# 2.0
+
+# In[89]:
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import streamlit as st
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense, Dropout
+
+# Load Data
+file_path = r"C:\Users\hp\Desktop\Calvin Desktop\Capstone Project  -  Group 8\Data\Climate Change - datasets\climate_data_final_df.csv"
+df = pd.read_csv(file_path)
+
+# Drop Unnecessary Column
+df.drop(columns=['Unnamed: 0'], inplace=True, errors='ignore')
+
+# Streamlit UI
+st.title("Climate Change & Energy Impact Analysis")
+st.subheader("Exploratory Data Analysis")
+
+# Country and Feature Selection
+selected_countries = st.multiselect("Select Countries", df['Entity'].unique(), default=df['Entity'].unique())
+selected_features = st.multiselect("Select Features", df.columns[2:], default=df.columns[2:])
+
+df = df[df['Entity'].isin(selected_countries)]
+
+st.write("### Dataset Overview")
+st.write(df[selected_features].head())
+
+st.write("### Summary Statistics")
+st.write(df[selected_features].describe())
+
+st.write("### Missing Values")
+st.write(df[selected_features].isnull().sum())
+
+# Handle Missing Values (Imputation or Dropping as needed)
+df.dropna(inplace=True)  # Can be replaced with df.fillna(df.mean()) if needed
+
+# Feature and Target Selection
+targets = ['Average Temperature', 'mmfrom1993-2008average', 'Renewable energy consumption (% of total final energy consumption)']
+features = [col for col in selected_features if col not in targets]  # Prevent feature leakage
+
+# Train Model Function
+def train_model(X, y, model_type='random_forest'):
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
+    
+    if model_type == 'random_forest':
+        model = RandomForestRegressor(n_estimators=100, random_state=42)
+        model.fit(X_train, y_train)
+    elif model_type == 'lstm':
+        X_train = np.expand_dims(X_train, axis=-1)
+        X_test = np.expand_dims(X_test, axis=-1)
+        
+        model = Sequential([
+            LSTM(50, return_sequences=True, input_shape=(X_train.shape[1], 1)),
+            Dropout(0.2),
+            LSTM(50, return_sequences=False),
+            Dropout(0.2),
+            Dense(1)  # Ensure single output
+        ])
+        
+        model.compile(optimizer='adam', loss='mse')
+        model.fit(X_train, y_train, epochs=50, batch_size=16, verbose=0)
+    
+    y_pred = model.predict(X_test)
+    
+    # Model Performance
+    mae = mean_absolute_error(y_test, y_pred)
+    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+    r2 = r2_score(y_test, y_pred)
+    
+    return model, scaler, X_train, X_test, y_test, y_pred, mae, rmse, r2
+
+# Model Selection
+model_choice = st.selectbox("Select Model", ["Random Forest", "LSTM"])
+X = df[features]
+y = df[targets]
+
+if model_choice == "Random Forest":
+    selected_model, scaler, X_train, X_test, y_test, y_pred, mae, rmse, r2 = train_model(X, y, model_type='random_forest')
+elif model_choice == "LSTM":
+    selected_model, scaler, X_train, X_test, y_test, y_pred, mae, rmse, r2 = train_model(X, y, model_type='lstm')
+
+# Display Metrics
+st.write("### Model Performance")
+st.write(f"MAE: {mae:.2f}, RMSE: {rmse:.2f}, R2: {r2:.2f}")
+
+# Feature Importance (for Random Forest)
+if model_choice == "Random Forest":
+    st.write("### Feature Importance")
+    feature_importance = selected_model.feature_importances_
+    importance_df = pd.DataFrame({'Feature': features, 'Importance': feature_importance}).sort_values(by='Importance', ascending=False)
+    fig, ax = plt.subplots()
+    sns.barplot(x='Importance', y='Feature', data=importance_df, ax=ax)
+    st.pyplot(fig)
+
+# Residual Plot
+st.write("### Residual Analysis")
+fig, ax = plt.subplots()
+sns.scatterplot(x=y_test.values.flatten(), y=(y_test.values.flatten() - y_pred.flatten()), ax=ax)
+ax.axhline(y=0, color='r', linestyle='--')
+ax.set_xlabel("Actual Values")
+ax.set_ylabel("Residuals")
+st.pyplot(fig)
+
+# Streamlit Execution Fix
+if __name__ == "__main__":
+    st.write("App Running Correctly.")
+
