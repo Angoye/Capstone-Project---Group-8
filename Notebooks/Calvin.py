@@ -1,170 +1,210 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[7]:
+# In[14]:
 
 
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 import streamlit as st
+import plotly.express as px
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout
 
-st.write(f"Seaborn version: {sns.__version__}")
+# Initialize session state
+if 'model_trained' not in st.session_state:
+    st.session_state.model_trained = False
+
+# Load Data with caching and error handling
+@st.cache_data
+def load_data(uploaded_file=None):
+    try:
+        if uploaded_file is not None:
+            df = pd.read_csv(uploaded_file)
+        else:
+            df = pd.read_csv("climate_data_final_df.csv")  # Default file
+        df.drop(columns=['Unnamed: 0'], inplace=True, errors='ignore')
+        return df
+    except Exception as e:
+        st.error(f"Data loading failed: {str(e)}")
+        return pd.DataFrame()
 
 # Streamlit UI
-st.title("Climate Change & Energy Impact Analysis")
-st.subheader("Exploratory Data Analysis")
+st.title("🌍 Climate Change & Energy Impact Analyzer")
+st.subheader("Interactive Analysis Dashboard")
 
 # File Uploader
-uploaded_file = st.file_uploader("Upload CSV", type=["csv"])
+uploaded_file = st.file_uploader("Upload your climate dataset (CSV)", type=["csv"])
 
-# Load Dataset
-def load_data(uploaded_file=None):
-    if uploaded_file is not None:
-        df = pd.read_csv(uploaded_file)
-    else:
-        df = pd.read_csv("climate_data_final_df.csv")  # Fallback to default file
-    df.drop(columns=['Unnamed: 0'], inplace=True, errors='ignore')
-    return df
-
+# Load data
 df = load_data(uploaded_file)
+if df.empty:
+    st.error("No data loaded. Please upload a valid CSV file.")
+    st.stop()
 
-# Country and Feature Selection
-if not df.empty:
-    selected_countries = st.multiselect(
-        "Select Countries", 
-        df['Entity'].unique(), 
-        default=df['Entity'].unique()
-    )
+# Sidebar Controls
+with st.sidebar:
+    st.header("Analysis Controls")
+    
+    # Country Selection
+    if 'Entity' not in df.columns:
+        st.error("Dataset missing 'Entity' column for country selection")
+        st.stop()
+    selected_country = st.selectbox("Select Country", df['Entity'].unique())
+    
+    # Feature Selection
+    available_features = [col for col in df.columns if col not in ['Entity', 'Year']]
+    if not available_features:
+        st.error("No features available in dataset")
+        st.stop()
+    
+    # Safe default features
+    possible_defaults = ['CO2 emissions (metric tons per capita)', 
+                        'GDP per capita', 
+                        'Population']
+    safe_default_features = [feat for feat in possible_defaults if feat in available_features][:2]
+    
     selected_features = st.multiselect(
         "Select Features", 
-        df.columns[2:], 
-        default=df.columns[2:]
+        available_features,
+        default=safe_default_features
     )
     
-    df = df[df['Entity'].isin(selected_countries)]
+    # Validate features
+    if not selected_features:
+        st.error("Please select at least one feature")
+        st.stop()
     
-    st.write("### Dataset Overview")
-    st.write(df[selected_features].head())
+    # Target Selection
+    valid_targets = [
+        'Average Temperature', 
+        'mmfrom1993-2008average', 
+        'Renewable energy consumption (% of total final energy consumption)'
+    ]
+    available_targets = [t for t in valid_targets if t in df.columns]
     
-    st.write("### Summary Statistics")
-    st.write(df[selected_features].describe())
+    if not available_targets:
+        st.error("No valid target variables found in dataset")
+        st.stop()
     
-    st.write("### Missing Values")
-    st.write(df[selected_features].isnull().sum())
+    target = st.selectbox("Select Target Variable", available_targets)
+
+# Data Filtering
+try:
+    filtered_df = df[df['Entity'] == selected_country].copy()
+    required_columns = ['Year'] + selected_features + [target]
+    filtered_df = filtered_df[required_columns].dropna()
     
-    # Handle Missing Values
-    df.dropna(inplace=True)
-    
-    if not df.empty:
-        # Feature and Target Selection
-        targets = ['Average Temperature', 'mmfrom1993-2008average', 
-                   'Renewable energy consumption (% of total final energy consumption)']
-        features = [col for col in selected_features if col not in targets]
+    if filtered_df.empty:
+        st.error(f"No data available for {selected_country} with selected features")
+        st.stop()
         
-        if features:
-            # Model Selection
-            model_choice = st.selectbox("Select Model", ["Random Forest", "LSTM"])
-            X = df[features]
-            y = df[targets]
+    if len(filtered_df) < 10:
+        st.warning(f"Low data count ({len(filtered_df)} records). Results may be unreliable.")
+        
+except KeyError as e:
+    st.error(f"Missing column in dataset: {str(e)}")
+    st.stop()
+
+# Data Exploration Section
+st.subheader("Data Exploration")
+
+col1, col2 = st.columns(2)
+with col1:
+    st.write("### Selected Data Preview")
+    st.dataframe(filtered_df.head(), height=250)
+
+with col2:
+    st.write("### Target Distribution")
+    fig = px.histogram(filtered_df, x=target, nbins=50)
+    st.plotly_chart(fig, use_container_width=True)
+
+# Time Series Visualization
+if 'Year' in filtered_df.columns:
+    st.write("### Temporal Trends")
+    time_fig = px.line(filtered_df, x='Year', y=target, 
+                      title=f"{target} Over Time in {selected_country}")
+    st.plotly_chart(time_fig, use_container_width=True)
+
+# Model Training Section
+st.subheader("Predictive Modeling")
+
+# Prepare data
+X = filtered_df[selected_features]
+y = filtered_df[target]
+
+# Model selection
+model_choice = st.radio("Select Model Type", ["Random Forest", "LSTM"], horizontal=True)
+
+# Train/test split
+try:
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, 
+        test_size=0.2, 
+        random_state=42
+    )
+except ValueError as e:
+    st.error(f"Train/test split failed: {str(e)}")
+    st.stop()
+
+def train_model(X_train, y_train, model_type):
+    try:
+        scaler = StandardScaler()
+        X_train_scaled = scaler.fit_transform(X_train)
+        
+        if model_type == "Random Forest":
+            model = RandomForestRegressor(n_estimators=200, random_state=42)
+            model.fit(X_train_scaled, y_train)
+            return model, scaler
             
-            # Train Model Function
-            def train_model(X, y, model_type='random_forest'):
-                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-                
-                scaler = StandardScaler()
-                X_train = scaler.fit_transform(X_train)
-                X_test = scaler.transform(X_test)
-                
-                results = {}
-                
-                for target in y.columns:
-                    y_train_target = y_train[target]
-                    y_test_target = y_test[target]
-                    
-                    if model_type == 'random_forest':
-                        model = RandomForestRegressor(n_estimators=100, random_state=42)
-                        model.fit(X_train, y_train_target)
-                        y_pred_target = model.predict(X_test)
-                    elif model_type == 'lstm':
-                        X_train_exp = np.expand_dims(X_train, axis=-1)
-                        X_test_exp = np.expand_dims(X_test, axis=-1)
-                        
-                        model = Sequential([
-                            LSTM(50, return_sequences=True, input_shape=(X_train.shape[1], 1)),
-                            Dropout(0.2),
-                            LSTM(50, return_sequences=False),
-                            Dropout(0.2),
-                            Dense(1)
-                        ])
-                        
-                        model.compile(optimizer='adam', loss='mse')
-                        model.fit(X_train_exp, y_train_target, epochs=50, batch_size=16, verbose=0)
-                        y_pred_target = model.predict(X_test_exp).flatten()
-                    
-                    mae = mean_absolute_error(y_test_target, y_pred_target)
-                    rmse = np.sqrt(mean_squared_error(y_test_target, y_pred_target))
-                    r2 = r2_score(y_test_target, y_pred_target)
-                    
-                    results[target] = {
-                        'model': model, 'y_test': y_test_target, 'y_pred': y_pred_target,
-                        'mae': mae, 'rmse': rmse, 'r2': r2
-                    }
-                
-                return results, scaler, X_train, X_test
+        elif model_type == "LSTM":
+            if 'Year' not in filtered_df.columns:
+                st.error("LSTM requires temporal data. Ensure 'Year' column exists.")
+                return None, None  # Ensures proper return even if error occurs
             
-            results, scaler, X_train, X_test = train_model(
-                X, y, 
-                model_type='random_forest' if model_choice == "Random Forest" else 'lstm'
+            # Reshape data for LSTM
+            X_train_reshaped = X_train_scaled.reshape((X_train_scaled.shape[0], 1, X_train_scaled.shape[1]))
+
+            model = Sequential([
+                LSTM(64, return_sequences=True, input_shape=(1, X_train_scaled.shape[1])),
+                Dropout(0.3),
+                LSTM(32),
+                Dropout(0.2),
+                Dense(1)
+            ])
+            
+            model.compile(optimizer='adam', loss='mse')
+            history = model.fit(
+                X_train_reshaped, y_train, 
+                epochs=100, 
+                batch_size=16, 
+                validation_split=0.2, 
+                verbose=0
             )
             
-            # Display Metrics
-            st.write("### Model Performance")
-            for target, res in results.items():
-                st.write(f"**{target}** - MAE: {res['mae']:.2f}, RMSE: {res['rmse']:.2f}, R2: {res['r2']:.2f}")
+            # Plot training history
+            fig = px.line(
+                pd.DataFrame({
+                    'Training Loss': history.history['loss'], 
+                    'Validation Loss': history.history['val_loss']
+                }),
+                title='Model Training Progress'
+            )
+            st.plotly_chart(fig)
             
-            # Feature Importance (Only for Random Forest)
-            if model_choice == "Random Forest":
-                st.write("### Feature Importance")
-                importance_df = pd.DataFrame({
-                    'Feature': features, 
-                    'Importance': results[targets[0]]['model'].feature_importances_
-                })
-                importance_df = importance_df.sort_values(by='Importance', ascending=False)
-                fig, ax = plt.subplots()
-                sns.barplot(x='Importance', y='Feature', data=importance_df, ax=ax)
-                st.pyplot(fig)
-                plt.close(fig)
-            
-            # Residual Plot
-            st.write("### Residual Analysis")
-            fig, ax = plt.subplots()
-            for target, res in results.items():
-                sns.scatterplot(
-                    x=res['y_test'].values, 
-                    y=(res['y_test'].values - res['y_pred']), 
-                    ax=ax, 
-                    label=target
-                )
-            ax.axhline(y=0, color='r', linestyle='--')
-            ax.set_xlabel("Actual Values")
-            ax.set_ylabel("Residuals")
-            ax.legend()
-            st.pyplot(fig)
-            plt.close(fig)
-            
-        else:
-            st.error("No features selected. Please include at least one feature.")
-    else:
-        st.warning("No data available after filtering.")
-else:
-    st.error("Failed to load data. Please upload a valid CSV file.")
+            return model, scaler
+        
+    except Exception as e:
+        st.error(f"Model training failed: {str(e)}")
+        return None, None  # Ensures function doesn't crash
+
+# Call the function
+model, scaler = train_model(X_train, y_train, model_choice)
+
+if model is None or scaler is None:
+    st.stop()  # Ensures script doesn't proceed with an invalid model
 
