@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[25]:
+# In[26]:
 
 
 import pandas as pd
@@ -29,7 +29,10 @@ st.set_page_config(page_title="Climate Analyzer", layout="wide", page_icon="🌍
 # Custom CSS for professional look
 st.markdown("""
     <style>
+    /* Base background */
     .main {background-color: #f8f9fa;}
+    
+    /* Metric cards */
     .metric-card {
         padding: 20px;
         background: white;
@@ -38,18 +41,41 @@ st.markdown("""
         border: 1px solid #e0e0e0;
         margin: 10px 0;
     }
+    
+    /* Card headers */
     .metric-header {
-        color: #2c3e50 !important;
-        font-size: 1.1rem !important;
-        margin-bottom: 8px !important;
+        color: #2c3e50;
+        font-size: 1.1rem;
+        margin-bottom: 8px;
+        font-family: 'Arial', sans-serif;
     }
+    
+    /* Values */
     .metric-value {
-        color: #2e86c1 !important;
-        font-size: 1.8rem !important;
-        font-weight: 700 !important;
+        color: #2e86c1;
+        font-size: 1.8rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+    
+    /* Expander headers */
+    div[data-testid="stExpander"] details summary p {
+        font-size: 1.2rem !important;
+        font-weight: 600 !important;
+        color: #1a5276 !important;
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+        .metric-value {
+            font-size: 1.4rem;
+        }
+        div[data-testid="stExpander"] details summary p {
+            font-size: 1rem !important;
+        }
     }
     </style>
-    """, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
 # Load Data
 @st.cache_data
@@ -105,7 +131,7 @@ except Exception as e:
     st.stop()
 
 # Create tabs
-tab1, tab2, tab3, tab4 = st.tabs(["📊 Data Overview", "🤖 Model Training", "🔮 Predictions","📝 Interpretation"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["📊 Data Overview", "🤖 Model Training", "🔮 Predictions","📝 Interpretation","📑 Policy Notes"])
 
 with tab1:
     col1, col2 = st.columns([1, 2])
@@ -224,13 +250,19 @@ with tab2:
             'Max Error': max_error(y_test, y_pred),
             'MAPE': np.mean(np.abs((y_test - y_pred) / y_test)) * 100
         }
-                # Save metirivs for Interpretation
+
+        if 'Predicted_Growth' not in st.session_state:
+        # Calculate emission growth rate from predictions
+            growth_rate = (y_pred[-1] - y_pred[0]) / (X_test['Year'].max() - X_test['Year'].min())
+        st.session_state.Predicted_Growth = growth_rate
+
+        # Save metirics for Interpretation
         st.session_state.metrics = metrics
         st.session_state.model_choice = model_choice  # Store model type
         st.session_state.target = target  # Store selected variable
         
         # Verify storage (temporary debug)
-        st.write("Debug - Stored Metrics:", st.session_state.metrics)
+        #st.write("Debug - Stored Metrics:", st.session_state.metrics)
 
 
         # Display metrics in columns
@@ -309,6 +341,17 @@ with tab3:
         current_value = filtered_df[target].iloc[-1]
         future_value = future_pred[-1]
         growth_pct = ((future_value - current_value) / current_value) * 100
+
+        if not X_test.empty and 'Year' in X_test.columns:
+            time_span = X_test['Year'].max() - X_test['Year'].min()
+            growth_rate = (y_pred[-1] - y_pred[0]) / time_span
+            st.session_state.Predicted_Growth = growth_rate
+        else:
+            # Fallback using filtered_df
+            test_years = filtered_df.loc[X_test.index, 'Year']
+            time_span = test_years.max() - test_years.min()
+            growth_rate = (y_pred[-1] - y_pred[0]) / time_span
+            st.session_state.Predicted_Growth = growth_rate       
         
         # Plot extended predictions
         fig = go.Figure()
@@ -396,7 +439,98 @@ with tab4:
             """, unsafe_allow_html=True)
     else:
         st.warning("Train a model first to see interpretation")
+
+with tab5:
+    st.header("Climate Modeling & Policy Guidance")
     
+    # Domain Knowledge Section
+    with st.expander("Why Climate Models Are Different", expanded=True):
+        st.markdown("""
+        **Key Climate Modeling Nuances:**
+        - 🎯 *Low R² Significance*: A 0.2 R² in climate models can represent meaningful trends due to:
+          - Long-term cumulative effects (small annual changes → big decadal impacts)
+          - High system complexity (many interacting variables)
+          - Measurement uncertainties in historical data
+        
+        - 📉 *Error Interpretation*:
+          ```python
+          # Climate impact multiplier
+          def climate_impact(error, years=10):
+              return error * years * 1.5  # Non-linear amplification
+          ```
+          - Example: 0.3°C annual error → 4.5°C decade error using 1.5x amplification factor
+        
+        - 🌡️ *Threshold Effects*: Small errors matter at critical points:
+          """)
+        col1, col2 = st.columns(2)
+        with col1:
+            st.metric("Ice Melt Threshold", "0°C", "±0.5°C Error Margin")
+        with col2:
+            st.metric("Crop Failure", "2°C Change", "±1°C Model Uncertainty")
+    
+    # Carbon Tax Calculator
+    with st.expander("Carbon Footprint Tax Projections", expanded=True):
+        st.subheader("Emission-Based Tax Estimator")
+        
+        # User Inputs
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            base_emissions = st.number_input("Current Emissions (MtCO2/yr)", min_value=1.0, value=100.0)
+        with col2:
+            tax_rate = st.slider("Tax Rate ($/tCO2)", 10, 100, 50)
+        with col3:
+            projection_years = st.slider("Projection Years", 5, 50, 30)
+        
+        # Get model predictions if available
+        if 'metrics' in st.session_state:
+            pred_growth = st.session_state.metrics.get('Predicted_Growth', 0.02)  # Assume 2% annual growth
+        else:
+            pred_growth = st.slider("Annual Emission Growth Rate", 0.0, 0.1, 0.02)
+        
+        # Tax Calculation Formula
+        years = np.arange(projection_years)
+        emissions = base_emissions * (1 + pred_growth) ** years
+        tax_liability = emissions * tax_rate
+        
+        # Create projections dataframe
+        tax_df = pd.DataFrame({
+            'Year': pd.date_range(start=pd.Timestamp.today(), periods=projection_years, freq='Y').year,
+            'Emissions': emissions,
+            'Tax': tax_liability
+        })
+        
+        # Display results
+        fig = px.area(tax_df, x='Year', y='Tax', 
+                     title=f"Projected Tax Liability @ ${tax_rate}/tCO2",
+                     labels={'Tax': 'Annual Tax ($B)'})
+        st.plotly_chart(fig, use_container_width=True)
+        
+        # Policy Recommendations
+        st.markdown("""
+        **Tax Policy Guidance:**
+        - Base Rate Formula:
+          ```math
+          Tax_{t} = Emissions_{t} × (Base Rate + (Predicted ΔT × $100/°C))
+          ```
+        - Recommended Components:
+          1. **Prediction-Based Surcharge**: 
+             - $100/°C of projected warming above 1.5°C target
+          2. **Error Margin Buffer**:
+             - Reserve 20% of tax revenue for prediction uncertainty
+          3. **Threshold Penalties**:
+             - 2× tax rate for crossing climate thresholds
+        """)
+    
+    # Model Limitations Disclaimer
+    st.markdown("""
+    ---
+    **Critical Assumptions:**
+    - Linear emission growth projections (real-world may vary)
+    - Constant tax rate policy (actual rates may escalate)
+    - Does not account for carbon sequestration efforts
+    - Based on {} model accuracy (±{}%)
+    """.format(st.session_state.get('model_choice', 'current'), 
+    st.session_state.metrics.get('MAPE', 1.1) if 'metrics' in st.session_state else 1.1))    
     st.markdown("---")
     st.markdown("Climate Change Impact Analyzer v1.0 | Developed by Calvin")
 
