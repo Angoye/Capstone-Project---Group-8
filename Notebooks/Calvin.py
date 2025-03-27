@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[28]:
+# In[30]:
 
 
 import pandas as pd
@@ -251,20 +251,25 @@ with tab2:
             'MAPE': np.mean(np.abs((y_test - y_pred) / y_test)) * 100
         }
 
-        if 'Predicted_Growth' not in st.session_state:
-        # Calculate emission growth rate from predictions
-            time_span = X_test['Year'].max() - X_test['Year'].min()
-        growth_rate = (y_pred[-1] - y_pred[0]) / time_span
-        st.session_state.Predicted_Growth = growth_rate
+        try:  # Nested try for growth rate calculation
+            if 'Predicted_Growth' not in st.session_state:
+                # Get years from X_test
+                years = X_test['Year']
+                time_span = years.max() - years.min()
+                
+                # Calculate growth rate
+                growth_rate = (y_pred[-1] - y_pred[0]) / time_span
+                st.session_state.Predicted_Growth = growth_rate
 
-        # Save metirics for Interpretation
+        except KeyError as e:
+            st.error(f"Missing column in data: {str(e)}")
+        except Exception as e:
+            st.error(f"Growth rate calculation failed: {str(e)}")
+
+        # Save metrics for Interpretation
         st.session_state.metrics = metrics
-        st.session_state.model_choice = model_choice  # Store model type
-        st.session_state.target = target  # Store selected variable
-        
-        # Verify storage (temporary debug)
-        #st.write("Debug - Stored Metrics:", st.session_state.metrics)
-
+        st.session_state.model_choice = model_choice
+        st.session_state.target = target
 
         # Display metrics in columns
         st.subheader("Model Diagnostics")
@@ -272,7 +277,7 @@ with tab2:
         
         # Create metric cards in grid
         for i, (name, value) in enumerate(metrics.items()):
-            with cols[i % 3]:  # Cycle through 3 columns
+            with cols[i % 3]:
                 st.markdown(f'''
                     <div class="metric-card">
                         <div class="metric-header">📊 {name}</div>
