@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[19]:
+# In[ ]:
 
 
 import pandas as pd
@@ -26,8 +26,24 @@ st.set_page_config(page_title="Climate Analyzer", layout="wide", page_icon="🌍
 st.markdown("""
     <style>
     .main {background-color: #f8f9fa;}
-    .st-bw {background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
-    .metric-card {padding: 15px; background: white; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+    .metric-card {
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border: 1px solid #e0e0e0;
+        margin: 10px 0;
+    }
+    .metric-header {
+        color: #2c3e50 !important;
+        font-size: 1.1rem !important;
+        margin-bottom: 8px !important;
+    }
+    .metric-value {
+        color: #2e86c1 !important;
+        font-size: 1.8rem !important;
+        font-weight: 700 !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -138,12 +154,30 @@ with tab2:
         # Display metrics in columns
         st.subheader("Model Performance")
         col1, col2, col3 = st.columns(3)
+        
         with col1:
-            st.markdown('<div class="metric-card">📉 **RMSE**<br><h3 style="color:#2e86c1">{:.3f}</h3></div>'.format(rmse), unsafe_allow_html=True)
+            st.markdown('''
+                <div class="metric-card">
+                    <div class="metric-header">📉 RMSE</div>
+                    <div class="metric-value">{:.3f}</div>
+                </div>
+            '''.format(rmse), unsafe_allow_html=True)
+
         with col2:
-            st.markdown('<div class="metric-card">📈 **R² Score**<br><h3 style="color#2e86c1">{:.3f}</h3></div>'.format(r2), unsafe_allow_html=True)
+            st.markdown('''
+                <div class="metric-card">
+                    <div class="metric-header">📈 R² Score</div>
+                    <div class="metric-value">{:.3f}</div>
+                </div>
+            '''.format(r2), unsafe_allow_html=True)
+
         with col3:
-            st.markdown('<div class="metric-card">📏 **MAE**<br><h3 style="color:#2e86c1">{:.3f}</h3></div>'.format(mae), unsafe_allow_html=True)
+            st.markdown('''
+                <div class="metric-card">
+                    <div class="metric-header">📏 MAE</div>
+                    <div class="metric-value">{:.3f}</div>
+                </div>
+            '''.format(mae), unsafe_allow_html=True)
         
         # Feature Importance
         if model_choice in ["Random Forest", "XGBoost"]:
@@ -160,36 +194,63 @@ with tab2:
 
 with tab3:
     try:
-        # Create prediction comparison dataframe
+        # Create prediction comparison dataframe with proper time alignment
         comparison_df = pd.DataFrame({
-            'Actual': y_test.values,
-            'Predicted': y_pred.flatten(),
-            'Year': X_test['Year'] if 'Year' in X_test else X_test.index
-        }).sort_index()
+            'Actual': y_test,
+            'Predicted': y_pred.flatten()
+        }, index=y_test.index)
+        
+        # Merge with original years
+        comparison_df = comparison_df.merge(
+            filtered_df[['Year']],
+            left_index=True,
+            right_index=True,
+            how='left'
+        ).sort_values('Year')
 
         st.subheader("Prediction Analysis")
         
-        # Time-based predictions
-        if 'Year' in comparison_df:
-            fig = px.line(comparison_df, x='Year', y=['Actual', 'Predicted'],
-                         title='Actual vs Predicted Values Over Time',
-                         markers=True, line_shape='spline')
-            st.plotly_chart(fig, use_container_width=True)
-        else:
-            fig = px.scatter(comparison_df, x='Actual', y='Predicted',
-                            trendline="ols", title='Actual vs Predicted Values')
-            st.plotly_chart(fig, use_container_width=True)
+        # Time-based predictions plot
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(
+            x=comparison_df['Year'],
+            y=comparison_df['Actual'],
+            name='Actual',
+            mode='lines+markers',
+            line=dict(color='#2e86c1', width=2)
+        ))
+        fig.add_trace(go.Scatter(
+            x=comparison_df['Year'],
+            y=comparison_df['Predicted'],
+            name='Predicted',
+            mode='lines+markers',
+            line=dict(color='#28a745', width=2, dash='dot')
+        ))
         
-        # Residuals plot
-        comparison_df['Residuals'] = comparison_df['Actual'] - comparison_df['Predicted']
-        fig = px.scatter(comparison_df, x='Predicted', y='Residuals',
-                        title='Residual Analysis',
-                        trendline="ols", color_continuous_scale='Blues')
+        fig.update_layout(
+            title='Actual vs Predicted Values Over Time',
+            xaxis_title='Year',
+            yaxis_title='Value',
+            hovermode='x unified',
+            template='plotly_white',
+            height=500
+        )
+        
         st.plotly_chart(fig, use_container_width=True)
         
+        # Add numerical display
+        with st.expander("View Numerical Data"):
+            st.dataframe(
+                comparison_df[['Year', 'Actual', 'Predicted']].style\
+                    .format(precision=2)\
+                    .highlight_max(subset=['Actual', 'Predicted'], color='#f8d7da')\
+                    .highlight_min(subset=['Actual', 'Predicted'], color='#d4edda'),
+                use_container_width=True
+            )
+            
     except Exception as e:
         st.error(f"Prediction visualization error: {str(e)}")
 
 st.markdown("---")
-st.markdown("Climate Change Impact Analyzer v1.0 | Developed by [Calvin]")
+st.markdown("Climate Change Impact Analyzer v1.0 | Developed by Calvin")
 
