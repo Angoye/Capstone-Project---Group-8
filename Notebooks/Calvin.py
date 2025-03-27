@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[26]:
+# In[28]:
 
 
 import pandas as pd
@@ -253,7 +253,8 @@ with tab2:
 
         if 'Predicted_Growth' not in st.session_state:
         # Calculate emission growth rate from predictions
-            growth_rate = (y_pred[-1] - y_pred[0]) / (X_test['Year'].max() - X_test['Year'].min())
+            time_span = X_test['Year'].max() - X_test['Year'].min()
+        growth_rate = (y_pred[-1] - y_pred[0]) / time_span
         st.session_state.Predicted_Growth = growth_rate
 
         # Save metirics for Interpretation
@@ -483,7 +484,7 @@ with tab5:
         
         # Get model predictions if available
         if 'metrics' in st.session_state:
-            pred_growth = st.session_state.metrics.get('Predicted_Growth', 0.02)  # Assume 2% annual growth
+            pred_growth = st.session_state.metrics.get('Predicted_Growth', 0.02) if 'metrics' in st.session_state else 0.02  # Assume 2% annual growth
         else:
             pred_growth = st.slider("Annual Emission Growth Rate", 0.0, 0.1, 0.02)
         
