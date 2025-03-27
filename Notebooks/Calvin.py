@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
+# In[24]:
 
 
 import pandas as pd
@@ -17,6 +17,7 @@ from xgboost import XGBRegressor
 from sklearn.model_selection import TimeSeriesSplit, GridSearchCV
 from sklearn.inspection import permutation_importance
 from sklearn.metrics import explained_variance_score, max_error
+from typing import Dict
 
 # Initialize session state
 if 'model_trained' not in st.session_state:
@@ -104,7 +105,7 @@ except Exception as e:
     st.stop()
 
 # Create tabs
-tab1, tab2, tab3 = st.tabs(["📊 Data Overview", "🤖 Model Training", "🔮 Predictions"])
+tab1, tab2, tab3, tab4 = st.tabs(["📊 Data Overview", "🤖 Model Training", "🔮 Predictions","📝 Interpretation"])
 
 with tab1:
     col1, col2 = st.columns([1, 2])
@@ -157,6 +158,51 @@ def train_model(X_train, y_train, model_type):
     model.fit(X_train, y_train)
     st.success(f"Best params: {model.best_params_}")
     return model.best_estimator_
+
+# Interpretation generation function
+def generate_interpretation(metrics: Dict, model_type: str, target: str) -> str:
+    interpretation = f"""
+    ##  {target.replace('_', ' ').title()} Model Interpretation
+    
+    ### Core Insights
+    **Model Type**: {model_type}
+    
+    - **Accuracy Profile**: """
+    
+    # R² Analysis
+    if metrics['R²'] < 0.3:
+        interpretation += f"Low explanatory power (R²={metrics['R²']:.3f}) but "
+    else:
+        interpretation += f"Reasonable explanatory power (R²={metrics['R²']:.3f}) with "
+    
+    # MAPE Analysis
+    if metrics['MAPE'] < 5:
+        interpretation += f"excellent relative precision (±{metrics['MAPE']:.1f}% error). "
+    else:
+        interpretation += f"moderate relative precision (±{metrics['MAPE']:.1f}% error). "
+    
+    # Error Analysis
+    interpretation += f"""
+    - **Error Profile**: Typical error of {metrics['RMSE']:.2f} units (MAE={metrics['MAE']:.2f}),
+      with worst-case error of {metrics['Max Error']:.2f} units.
+    
+    ### Climate Context
+    For {target.replace('_', ' ')}:
+    - ±{metrics['MAPE']:.1f}% error represents """
+    
+    # Domain-specific examples
+    if "temp" in target.lower():
+        interpretation += f"approximately ±{0.3*metrics['MAPE']:.1f}°C variance"
+    elif "precip" in target.lower():
+        interpretation += f"about ±{metrics['MAPE']:.1f}mm rainfall variance"
+    else:
+        interpretation += "significant variance in measured values"
+    
+    interpretation += """
+    \n- Best used for identifying multi-year trends rather than annual variations
+    - Consider combining with domain expertise for policy decisions"""
+    
+    return interpretation
 
 # Add forecast controls in sidebar
 with st.sidebar:
@@ -289,8 +335,59 @@ with tab3:
             st.metric("Percentage Growth", f"{growth_pct:.1f}%")
             
     except Exception as e:
-        st.error(f"Projection error: {str(e)}")
-
-st.markdown("---")
-st.markdown("Climate Change Impact Analyzer v1.0 | Developed by Calvin")
+        st.error(f"Projection error: {str(e)}")      
+with tab4:
+    if 'metrics' in st.session_state:
+        st.markdown(generate_interpretation(st.session_state.metrics, 
+                                          st.session_state.model_choice, 
+                                          st.session_state.target), 
+                  unsafe_allow_html=True)
+        
+        # Visual explanation
+        col1, col2 = st.columns(2)
+        with col1:
+            fig = px.pie(values=[st.session_state.metrics['R²'], 1 - st.session_state.metrics['R²']],
+                        names=['Explained Variance', 'Unexplained'],
+                        title=f"R² Breakdown ({st.session_state.metrics['R²']:.1%})",
+                        color_discrete_sequence=['#2e86c1', '#e0e0e0'])
+            st.plotly_chart(fig, use_container_width=True)
+            
+        with col2:
+            error_df = pd.DataFrame({
+                'Error Type': ['Typical (MAE)', 'Worst Case'],
+                'Value': [st.session_state.metrics['MAE'], 
+                         st.session_state.metrics['Max Error']]
+            })
+            fig = px.bar(error_df, x='Error Type', y='Value',
+                        title='Error Magnitude Comparison',
+                        color='Error Type', 
+                        color_discrete_sequence=['#2e86c1', '#28a745'])
+            st.plotly_chart(fig, use_container_width=True)
+        
+        # Recommendations
+        st.markdown("""
+            ### Recommendations
+            <div class="metric-card">
+                <div class="metric-header">✅ Do</div>
+                <ul>
+                    <li>Use for multi-year trend analysis</li>
+                    <li>Combine with other climate indicators</li>
+                    <li>Monitor error distribution quarterly</li>
+                </ul>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-header">⚠️ Don't</div>
+                <ul>
+                    <li>Rely solely for annual predictions</li>
+                    <li>Use for extreme event forecasting</li>
+                    <li>Compare directly with raw sensor data</li>
+                </ul>
+            </div>
+            """, unsafe_allow_html=True)
+    else:
+        st.warning("Train a model first to see interpretation")
+    
+    st.markdown("---")
+    st.markdown("Climate Change Impact Analyzer v1.0 | Developed by Calvin")
 
