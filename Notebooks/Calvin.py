@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[24]:
+# In[25]:
 
 
 import pandas as pd
@@ -224,7 +224,15 @@ with tab2:
             'Max Error': max_error(y_test, y_pred),
             'MAPE': np.mean(np.abs((y_test - y_pred) / y_test)) * 100
         }
+                # Save metirivs for Interpretation
+        st.session_state.metrics = metrics
+        st.session_state.model_choice = model_choice  # Store model type
+        st.session_state.target = target  # Store selected variable
         
+        # Verify storage (temporary debug)
+        st.write("Debug - Stored Metrics:", st.session_state.metrics)
+
+
         # Display metrics in columns
         st.subheader("Model Diagnostics")
         cols = st.columns(3)
@@ -338,10 +346,11 @@ with tab3:
         st.error(f"Projection error: {str(e)}")      
 with tab4:
     if 'metrics' in st.session_state:
-        st.markdown(generate_interpretation(st.session_state.metrics, 
-                                          st.session_state.model_choice, 
-                                          st.session_state.target), 
-                  unsafe_allow_html=True)
+        st.markdown(generate_interpretation(
+            st.session_state.metrics,
+            st.session_state.model_choice,  # Changed from model_choice
+            st.session_state.target         # Changed from target
+        ), unsafe_allow_html=True)
         
         # Visual explanation
         col1, col2 = st.columns(2)
