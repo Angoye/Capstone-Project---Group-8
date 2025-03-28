@@ -68,4 +68,6 @@ Climate Risk Index:
  - Losses per GDP (losses_per_gdp_total): Reflects economic vulnerability to climate shocks.
 
 
+
+
  
