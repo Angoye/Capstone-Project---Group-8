@@ -67,6 +67,63 @@ Climate Risk Index:
 
  - Losses per GDP (losses_per_gdp_total): Reflects economic vulnerability to climate shocks.
 
+ 
+# Modeling and Evaluation
+
+> Models used:
+
+ - Supervised Learning: Random Forest, XGBoost, Linear Regression (for CO₂ emissions and temperature prediction)
+
+ - Time Series Models:
+
+   
+ > Model Performance:
+
+ - XGBoost (non-tuned) performed best, explaining ~97.7% of the variance in CO₂ emissions.
+
+ - Random Forest performed similarly well but slightly below XGBoost.
+
+ - Linear Regression significantly underperformed due to the non-linear nature of the relationships.
+
+ > Surprisingly, tuning slightly reduced performance for both models.
+
+     -Possible reasons: overfitting on training data.
+
+     - Tuned Random Forest outperformed tuned XGBoost in both R² and RMSE.
+     
+  > In Temperature predictions,Tuned XGBoost was the best model, achieving the lowest RMSE (0.983) and highest R² (98.34%).
+ 
+> Model Performance vs. Baseline:
+
+ - Baseline Model: A simple historical average or linear regression was used as the baseline.
+
+ - Final Model: XGBoost (for emissions and temperature).XGBoost significantly outperformed Linear Regression, capturing non-linear relationships in emissions and 
+    temperature trends.It had R² score (0.977) with Lowest RMSE (1.06).
+
+# Conclusion
+
+> Recommended Use of the Model:
+
+ - Policy Planning: Governments can use forecasts to design carbon reduction policies.
+
+ - Disaster Preparedness: Coastal cities and agencies can anticipate flooding risks.
+
+ - Financial Decision-Making: Investors and insurers can assess economic vulnerabilities.
+
+# Recommendations
+
+- Governments should use predictive models to proactively implement carbon tax policies and incentives for green energy adoption.
+
+- Businesses can utilize emissions forecasts to implement sustainable practices and align their operations with global carbon neutrality objectives.
+
+- Further research should be conducted to enhance model accuracy using additional climate variables and ensemble learning techniques.
+
+# Challenges and Limitations
+
+ - Inconsistent data reporting across different sources
+
+ - Uncertainty in long-term forecasts due to external factors (policy changes, natural disasters)
+
 
 
 
