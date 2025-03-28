@@ -11,7 +11,7 @@
 
 > The Climate Risk Index evaluates vulnerability to extreme weather events and climate-related risks. It ranks countries based on climate-related fatalities, economic losses, and exposure to hazards. According to Our World in Data (Ritchie et al., 2023), nations with lower Climate Risk Index (CRI) ranks face higher risks, particularly in regions with weak adaptive infrastructure
 
-> According to data from Our World in Data (Ritchie et al., 2023) highlights the accelerating trends in CO₂ emissions and their direct correlation with rising global temperatures. Additionally,according to Our World in Data (Ritchie et al., 2023), nations with lower Climate Risk Index (CRI) ranks face higher risks, particularly in regions with weak adaptive infrastructure.
+> According to data from Our World in Data (Ritchie et al., 2023) highlights the accelerating trends in CO₂ emissions and their direct correlation with rising global temperatures. Additionally,nations with lower Climate Risk Index (CRI) ranks face higher risks, particularly in regions with weak adaptive infrastructure.
 
 >  These findings reinforce the urgency of developing predictive models to aid policymakers, businesses, and environmental agencies in designing more effective interventions for emissions reduction, climate resilience, and disaster preparedness.
 
