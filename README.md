@@ -74,7 +74,7 @@ Climate Risk Index:
 
  - Supervised Learning: Random Forest, XGBoost, Linear Regression (for CO₂ emissions and temperature prediction)
 
- - Time Series Models:
+ - Time Series Models: 
 
    
  > Model Performance:
