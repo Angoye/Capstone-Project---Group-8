@@ -6,4 +6,48 @@
 
  ![Uploading image.png…]()
   
+# Business Understanding and Data Understanding
+> The dataset Climate data final dataset was sourced from  [Our World in Data](https://ourworldindata.org/), [World Bank](https://data.worldbank.org/).The dataset
+ has 6323 records and  28 features.
+> Climate Risk Index was sources from [Our World in Data](https://ourworldindata.org/), dataset has 182 records and 17 features. 
+> Climate change poses significant risk to economies,ecosystem and Health.Government and Organisations rely on accurate climate projections to implement mitigation strategies.
+> The Climate Risk Index evaluates vulnerability to extreme weather events and climate-related risks. It ranks countries based on climate-related fatalities, economic losses, and exposure to hazards. According to Our World in Data (Ritchie et al., 2023), nations with lower Climate Risk Index (CRI) ranks face higher risks, particularly in regions with weak adaptive infrastructure
 
+> According to data from Our World in Data (Ritchie et al., 2023) highlights the accelerating trends in CO₂ emissions and their direct correlation with rising global temperatures.
+> Additionally,according to Our World in Data (Ritchie et al., 2023), nations with lower Climate Risk Index (CRI) ranks face higher risks, particularly in regions with weak adaptive infrastructure.
+>  These findings reinforce the urgency of developing predictive models to aid policymakers, businesses, and environmental agencies in designing more effective interventions for emissions reduction, climate resilience, and disaster preparedness.
+
+> This project aims to build a predictive model that forecasts: 
+     > Annual CO₂ emissions per capita
+     > Average annual temperature
+     > Global sea level rise
+> By providing both short-term predictions and long-term forecasts, this project bridges the gap between raw data and actionable climate intelligence.
+>
+> # Data understanding
+> Climate data final dataset:
+> Source:  [Our World in Data](https://ourworldindata.org/), [World Bank](https://data.worldbank.org/).
+> Size: 6,323 records with 28 features.
+> Purpose: Tracks CO₂ and GHG emissions by country and sector over time.
+> Key Features:
+Sector-wise emissions: Tracks emissions from transport, industry, electricity, and more.
+Annual CO₂ emissions per capita: Reflects individual contributions to emissions.
+Average temperature: Yearly average regional/country temperatures.
+Sea level rise: Measured relative to the 1993–2008 baseline.
+Forest area (% of land): Indicates national forest coverage.
+Renewable energy usage: Share of energy derived from renewable sources.
+>
+> Source: Climate Risk Index: [Our World in Data](https://ourworldindata.org/).
+> Size: 182 records with 17 features
+> Purpose: Evaluates vulnerability to extreme weather events and climate-related risks.
+> Key Features:
+
+Climate Risk Index Rank (cri_rank): Indicates relative climate risk (lower = higher risk).
+
+Fatalities (fatalities_total): Deaths caused by extreme weather.
+
+Economic Losses (losses_usdm_ppp_total): Monetary losses adjusted for PPP (in USD millions).
+
+Losses per GDP (losses_per_gdp_total): Reflects economic vulnerability to climate shocks.
+
+
+ 
