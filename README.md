@@ -105,7 +105,8 @@ Climate Risk Index:
 
  - ![alt text](image-2.png)
 
- - ![alt text](image-3.png)
+ - ![image](https://github.com/user-attachments/assets/1ab74124-9c24-4e6f-8bf0-0f1a685802f7)
+
 
  > Strong Positive Correlations Between Emission Sources this suggests that emissions tend to rise and fall together across sectors. 
 
