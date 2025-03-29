@@ -127,10 +127,12 @@ Climate Risk Index:
 > Used Tableau to  predict  future critical climate indicators:CO₂ emissions per capita, temperature, and global sea level rise.
 
 - Prediction for Annual CO₂ emissions per capita indicator:
-
-
+  
+ ![image](https://github.com/user-attachments/assets/e1f5275c-c595-4807-b8f4-80cad2f0c3b3)
 
 - Prediction for Temperature indicator:
+
+  
 
   
 
