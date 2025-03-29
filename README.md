@@ -119,10 +119,7 @@ Climate Risk Index:
 
  > Feature Importance Plot: Bar chart from XGBoost to show which factors impact predictions most.
 
- - ![alt text](image-4.png)
-
-
-
+ - ![image](https://github.com/user-attachments/assets/ae4f19a7-1fa3-4265-8ec1-e5d4b7df1148)
  
 # Modeling and Evaluation
 
