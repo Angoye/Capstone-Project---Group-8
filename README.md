@@ -81,7 +81,8 @@ Climate Risk Index:
 
  > Top 10 Emission Sources Over Time
 
-  - ![alt text](image-7.png)
+  - ![image](https://github.com/user-attachments/assets/01c72824-d739-40c6-a2ae-fbbd2550bf18)
+
 
   > Emissions from sectors like transport and industry show a consistent upward trend, indicating their growing contribution to environmental challenges.
 
