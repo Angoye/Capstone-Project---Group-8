@@ -196,6 +196,17 @@ Climate Risk Index:
 
  - Uncertainty in long-term forecasts due to external factors (policy changes, natural disasters)
 
+# Citations
+- Climate Watch (2024) – with major processing by Our World in Data
+
+- World Bank. (2024). World Development Indicators: Population and Urbanization Data (Indicator Dataset 19) [Data file]. Retrieved from https://data.worldbank.org/indicator
+
+- Germanwatch. (2025). Global Climate Risk Index (CRI). Retrieved from https://www.germanwatch.org/en/cri
+
+# Notebook Contributors
+@Angoye @ketty-odero @ibnudiyat @vivian510 @CKimau @GraceMwende
+
+
 
 
 
