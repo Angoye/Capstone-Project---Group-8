@@ -3,10 +3,9 @@
 # Overview
 > Climate change is a global crisis yet many regions lack reliable forecasts to guide policy and investments.By leveraging historical climate and socioeconomic data,the project uses Machine Learning and Time Series forecasting to predict critical climate indicators:CO₂ emissions per capita, average annual temperature, and global sea level rise.
 > By transforming Raw data into actionable climate intelligence,our model empowers Policy makers design effective policies, enables investors to anticipate risks and facilitates resource allocation turning data into proactive climate solution.
-
- ![Uploading image.png…]()
   
 # Business Understanding and Data Understanding
+
 > Climate change poses significant risk to economies,ecosystem and Health.Government and Organisations rely on accurate climate projections to implement mitigation strategies.
 
 > The Climate Risk Index evaluates vulnerability to extreme weather events and climate-related risks. It ranks countries based on climate-related fatalities, economic losses, and exposure to hazards. According to Our World in Data (Ritchie et al., 2023), nations with lower Climate Risk Index (CRI) ranks face higher risks, particularly in regions with weak adaptive infrastructure
@@ -66,6 +65,61 @@ Climate Risk Index:
  - Economic Losses (losses_usdm_ppp_total): Monetary losses adjusted for PPP (in USD millions).
 
  - Losses per GDP (losses_per_gdp_total): Reflects economic vulnerability to climate shocks.
+
+ > Outlier detection:
+
+   - ![alt text](image-6.png)
+
+  > CO₂ Emissions: Most countries have low emissions, but few extreme outliers exist.
+
+  > Temperature Trends: No extreme outliers; The median is almost near the upper quartile indicating    most countries have higher average temperatures.
+
+
+ # Exploratory Data Analysis
+
+ > Top 10 Emission Sources Over Time
+
+  - ![alt text](image-7.png)
+
+  > Emissions from sectors like transport and industry show a consistent upward trend, indicating their growing contribution to environmental challenges.
+
+  > Most sources appear to have more stable emissions, suggesting less variation over the years.
+
+ > Climate indicators Over Time: 
+
+  ![alt text](image-1.png)
+
+  - Average Temperature: Rising trend, indicating global warming over time.
+
+  - Forest Area %: Declining trend, suggesting deforestation and habitat loss.
+
+  - Population Total: Steady increase, reflecting global population growth.
+
+  - CO₂ Emissions per Capita: Fluctuating but mostly flat or slightly downward trend energy efficiency improvements, renewable adoption, or policy changes in major emitting nations.
+
+  - Renewable Energy Consumption %): Gradual increase, indicating a shift towards sustainable energy sources.
+
+  - mmfrom1993-2008average : Rising sea level
+
+ > Correlation Matrix: Heatmap to highlight relationships between climate variables.
+
+ - ![alt text](image-2.png)
+
+ - ![alt text](image-3.png)
+
+ > Strong Positive Correlations Between Emission Sources this suggests that emissions tend to rise and fall together across sectors. 
+
+ - losses_per_gdp_total and fatalities_per_100k_total (0.83) → Higher economic losses per GDP are associated with higher fatalities per 100,000 people
+
+ - fatalities_total and losses_usdm_ppp_total (0.60) → More fatalities are linked to higher losses in terms of purchasing power parity.
+
+ - losses_per_gdp_total (-0.22) and cri_score → Higher economic losses are weakly linked to lower CRI scores.This can be as a result of Countries having better disaster preparedness (e.g, early warning systems, infrastructure, emergency response) may have lower CRI scores despite high losses.
+
+ > Feature Importance Plot: Bar chart from XGBoost to show which factors impact predictions most.
+
+ - ![alt text](image-4.png)
+
+
 
  
 # Modeling and Evaluation
