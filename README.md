@@ -123,6 +123,21 @@ Climate Risk Index:
  > Feature Importance Plot: Bar chart from XGBoost to show which factors impact predictions most.
 
  - ![image](https://github.com/user-attachments/assets/ae4f19a7-1fa3-4265-8ec1-e5d4b7df1148)
+
+> Used Tableau to  predict  future critical climate indicators:CO₂ emissions per capita, temperature, and global sea level rise.
+
+- Prediction for Annual CO₂ emissions per capita indicator:
+
+
+
+- Prediction for Temperature indicator:
+
+  
+
+- Prediction for Sea Level rise indicator:
+
+
+
  
 # Modeling and Evaluation
 
