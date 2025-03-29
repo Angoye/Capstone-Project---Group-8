@@ -87,7 +87,7 @@ Climate Risk Index:
 
  > Climate indicators Over Time: 
 
-  ![alt text](image-1.png)
+  ![image](https://github.com/user-attachments/assets/7dbf00ed-3bc4-4513-bfa7-24cf561a69fb)
 
   - Average Temperature: Rising trend, indicating global warming over time.
 
