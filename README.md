@@ -204,7 +204,14 @@ Climate Risk Index:
 - Germanwatch. (2025). Global Climate Risk Index (CRI). Retrieved from https://www.germanwatch.org/en/cri
 
 # Notebook Contributors
-@Angoye @ketty-odero @ibnudiyat @vivian510 @CKimau @GraceMwende
+[@Angoye](https://github.com/Angoye),[@ketty-odero](https://github.com/ketty-odero),[@ibnudiyat ](https://github.com/ibnudiyat )
+
+[@vivian510](https://github.com/vivian510),[@CKimau ](https://github.com/@CKimau ),[@GraceMwende](https://github.com/GraceMwende)
+
+
+ 
+
+
 
 
 
