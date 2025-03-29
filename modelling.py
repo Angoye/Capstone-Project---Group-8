@@ -84,7 +84,7 @@ def load_data(uploaded_file=None):
         if uploaded_file is not None:
             df = pd.read_csv(uploaded_file)
         else:
-            df = pd.read_csv("climate_data_final_df.csv")
+            df = pd.read_csv("./Data/Climate Change - datasets/climate_data_final_df.csv")
         df.drop(columns=['Unnamed: 0'], inplace=True, errors='ignore')
         return df
     except Exception as e:
