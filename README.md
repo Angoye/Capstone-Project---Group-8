@@ -68,7 +68,8 @@ Climate Risk Index:
 
  > Outlier detection:
 
-   - ![image](https://github.com/user-attachments/assets/e2634343-a356-41ff-b7ff-5807cca438fd)
+   - ![image](https://github.com/user-attachments/assets/ebe401d1-b0ff-48fd-aab6-0652686d1bfa)
+
 
 
   > CO₂ Emissions: Most countries have low emissions, but few extreme outliers exist.
