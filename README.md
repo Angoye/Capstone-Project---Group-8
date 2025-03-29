@@ -102,7 +102,7 @@ Climate Risk Index:
 
   - CO₂ Emissions per Capita: Fluctuating but mostly flat or slightly downward trend energy efficiency improvements, renewable adoption, or policy changes in major emitting nations.
 
-  - Renewable Energy Consumption %): Gradual increase, indicating a shift towards sustainable energy sources.
+  - Renewable Energy Consumption (%): Gradual increase, indicating a shift towards sustainable energy sources.
 
   - mmfrom1993-2008average : Rising sea level
 
@@ -126,19 +126,20 @@ Climate Risk Index:
 
  - ![image](https://github.com/user-attachments/assets/ae4f19a7-1fa3-4265-8ec1-e5d4b7df1148)
 
-> Used Tableau to  predict  future critical climate indicators:CO₂ emissions per capita, temperature, and global sea level rise.
+> Used [Tableau](https://public.tableau.com/app/profile/grace.mwende/viz/Climatechangeproject/CO2EmissionsDashboard?publish=yes) to show critical climate indicators:CO₂ emissions per capita, temperature, and global sea level rise.
 
-- Prediction for Annual CO₂ emissions per capita indicator:
+- Visualization for Annual CO₂ emissions per capita indicator:
   
  ![image](https://github.com/user-attachments/assets/e1f5275c-c595-4807-b8f4-80cad2f0c3b3)
 
-- Prediction for Temperature indicator:
+- Visualization for Temperature indicator:
 
  ![image](https://github.com/user-attachments/assets/b98cc660-c9ba-43a4-be02-33f51b2d51fd)
 
-- Prediction for Sea Level rise indicator:
+- Visualization for Sea Level rise indicator:
 
 ![image](https://github.com/user-attachments/assets/bdb3714a-78b2-4db1-8a13-de72aa235210)
+
  
 # Modeling and Evaluation
 
