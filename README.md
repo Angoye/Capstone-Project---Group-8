@@ -68,7 +68,9 @@ Climate Risk Index:
 
  > Outlier detection:
 
-   - ![alt text](image-6.png)
+   - ![image](https://github.com/user-attachments/assets/ebe401d1-b0ff-48fd-aab6-0652686d1bfa)
+
+
 
   > CO₂ Emissions: Most countries have low emissions, but few extreme outliers exist.
 
@@ -79,7 +81,8 @@ Climate Risk Index:
 
  > Top 10 Emission Sources Over Time
 
-  - ![alt text](image-7.png)
+  - ![image](https://github.com/user-attachments/assets/01c72824-d739-40c6-a2ae-fbbd2550bf18)
+
 
   > Emissions from sectors like transport and industry show a consistent upward trend, indicating their growing contribution to environmental challenges.
 
@@ -87,7 +90,7 @@ Climate Risk Index:
 
  > Climate indicators Over Time: 
 
-  ![alt text](image-1.png)
+  ![image](https://github.com/user-attachments/assets/7dbf00ed-3bc4-4513-bfa7-24cf561a69fb)
 
   - Average Temperature: Rising trend, indicating global warming over time.
 
@@ -103,9 +106,11 @@ Climate Risk Index:
 
  > Correlation Matrix: Heatmap to highlight relationships between climate variables.
 
- - ![alt text](image-2.png)
+ - ![image](https://github.com/user-attachments/assets/030a58f8-6444-4e7a-941e-27796dde8b00)
 
- - ![alt text](image-3.png)
+
+ - ![image](https://github.com/user-attachments/assets/1ab74124-9c24-4e6f-8bf0-0f1a685802f7)
+
 
  > Strong Positive Correlations Between Emission Sources this suggests that emissions tend to rise and fall together across sectors. 
 
@@ -117,7 +122,19 @@ Climate Risk Index:
 
  > Feature Importance Plot: Bar chart from XGBoost to show which factors impact predictions most.
 
- - ![alt text](image-4.png)
+ - ![image](https://github.com/user-attachments/assets/ae4f19a7-1fa3-4265-8ec1-e5d4b7df1148)
+
+> Used Tableau to  predict  future critical climate indicators:CO₂ emissions per capita, temperature, and global sea level rise.
+
+- Prediction for Annual CO₂ emissions per capita indicator:
+
+
+
+- Prediction for Temperature indicator:
+
+  
+
+- Prediction for Sea Level rise indicator:
 
 
 
