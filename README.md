@@ -136,8 +136,7 @@ Climate Risk Index:
 
 - Prediction for Sea Level rise indicator:
 
-
-
+![image](https://github.com/user-attachments/assets/bdb3714a-78b2-4db1-8a13-de72aa235210)
  
 # Modeling and Evaluation
 
