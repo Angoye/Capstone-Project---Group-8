@@ -103,7 +103,8 @@ Climate Risk Index:
 
  > Correlation Matrix: Heatmap to highlight relationships between climate variables.
 
- - ![alt text](image-2.png)
+ - ![image](https://github.com/user-attachments/assets/030a58f8-6444-4e7a-941e-27796dde8b00)
+
 
  - ![image](https://github.com/user-attachments/assets/1ab74124-9c24-4e6f-8bf0-0f1a685802f7)
 
