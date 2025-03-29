@@ -197,6 +197,22 @@ Climate Risk Index:
 
  - Uncertainty in long-term forecasts due to external factors (policy changes, natural disasters)
 
+# How to run the apllication
+Follow these steps to set up and run the application on your local machine:
+
+1. Install Dependencies
+Ensure you have Python installed (preferably Python 3.8 or later). Then, run the following commands in your terminal or command prompt:
+- pip install xgboost
+- pip install -r requirements.txt
+
+2. Run the Application
+Once all dependencies are installed, start the Streamlit app by running:
+streamlit run modelling.py
+
+3. Troubleshooting
+If you encounter ModuleNotFoundError: No module named 'xgboost', ensure you have installed it correctly:
+- pip install xgboost
+
 # Citations
 - Climate Watch (2024) – with major processing by Our World in Data
 
