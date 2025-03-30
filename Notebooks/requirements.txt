@@ -6,5 +6,10 @@ streamlit
 scikit-learn
 plotly
 tensorflow
+xgboost
+statsmodels
+scipy
+joblib
+tqdm
 
 
